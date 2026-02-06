@@ -3,5 +3,6 @@ pandas
 numpy
 scikit-learn
 requests
-gunicorn
 beautifulsoup4
+gunicorn
+
