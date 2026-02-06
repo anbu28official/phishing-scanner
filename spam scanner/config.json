@@ -1,0 +1,22 @@
+{
+    "app_name": "Kavzz AI Shield",
+    "version": "3.0.0",
+    "server": {
+        "host": "127.0.0.1",
+        "port": 5000,
+        "debug": true
+    },
+    "model": {
+        "dataset_file": "phishing.csv",
+        "n_estimators": 200,
+        "features": [
+            "UsingIP", "LongURL", "ShortURL", "Symbol@", "Redirecting//", 
+            "PrefixSuffix-", "SubDomains", "HTTPS", "HTTPSDomainURL", "NonStdPort",
+            "AnchorURL", "IframeRedirection", "ServerFormHandler", "StatusBarCust", "DisableRightClick"
+        ]
+    },
+    "logging": {
+        "enabled": true,
+        "log_file": "scan_logs.json"
+    }
+}

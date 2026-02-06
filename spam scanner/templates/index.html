@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scam & Phishing Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #020c1b;
+            --card-bg: rgba(10, 25, 47, 0.7);
+            --primary: #64ffda; /* Cyan for Safe/Action */
+            --danger: #ff4d4d;  /* Red for Malicious */
+            --text-main: #ccd6f6;
+            --text-muted: #8892b0;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            /* Tech Grid Background */
+            background-image: 
+                linear-gradient(rgba(100, 255, 218, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 255, 218, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .container {
+            width: 500px;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            box-shadow: 0 0 40px rgba(2, 12, 27, 0.8);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Scan Line Animation */
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: scan 3s infinite linear;
+            opacity: 0.5;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px;
+            background: rgba(2, 12, 27, 0.5);
+            border: 1px solid var(--text-muted);
+            border-radius: 8px;
+            color: var(--primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:hover {
+            background: rgba(100, 255, 218, 0.1);
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* RESULTS AREA */
+        #result-box {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-safe {
+            border: 1px solid var(--primary);
+            background: rgba(100, 255, 218, 0.05);
+        }
+        
+        .result-danger {
+            border: 1px solid var(--danger);
+            background: rgba(255, 77, 77, 0.05);
+        }
+
+        .status-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .safe-text { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .danger-text { color: var(--danger); text-shadow: 0 0 10px var(--danger); }
+
+        .confidence {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        @keyframes scan { 
+            0% { top: 0%; opacity: 0; } 
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; } 
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>SCAM & PHISHING</h1>
+        <p class="subtitle">AI DETECTOR SYSTEM</p>
+
+        <form id="scanForm">
+            <input type="text" name="url" placeholder="ENTER TARGET URL..." autocomplete="off" required>
+            <button type="submit" id="btn">INITIATE SCAN</button>
+        </form>
+
+        <div id="result-box">
+            <div id="status" class="status-text">SAFE</div>
+            <div class="confidence">CONFIDENCE SCORE: <span id="score">0%</span></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('scanForm');
+        const btn = document.getElementById('btn');
+        const resultBox = document.getElementById('result-box');
+        const statusText = document.getElementById('status');
+        const scoreText = document.getElementById('score');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Animation State
+            btn.innerText = "SCANNING...";
+            btn.style.opacity = "0.7";
+            resultBox.style.display = "none";
+
+            const formData = new FormData(form);
+
+            try {
+                const res = await fetch('/predict', { method: 'POST', body: formData });
+                const data = await res.json();
+
+                // Show Results
+                setTimeout(() => {
+                    resultBox.style.display = "block";
+                    btn.innerText = "INITIATE SCAN";
+                    btn.style.opacity = "1";
+
+                    statusText.innerText = data.result;
+                    scoreText.innerText = data.confidence + "%";
+
+                    if(data.result === "SAFE") {
+                        resultBox.className = "result-safe";
+                        statusText.className = "status-text safe-text";
+                    } else {
+                        resultBox.className = "result-danger";
+                        statusText.className = "status-text danger-text";
+                    }
+                }, 800);
+
+            } catch (err) {
+                alert("Connection Error. Ensure backend is running.");
+                btn.innerText = "RETRY SCAN";
+            }
+        });
+    </script>
+</body>
+</html>
